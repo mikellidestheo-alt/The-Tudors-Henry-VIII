@@ -1,0 +1,875 @@
+<title>Henry’s Court</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Cinzel:wght@600;800&display=swap">
+<style>
+/* Layout: a green Tudor hall. Header bar on top, one centred stage below. Cream panels hold the words, gilt frames hold the portraits. */
+:root{
+  --bg:#10261b; --bg2:#17382a; --panel:#f0f2e8; --panel2:#e1e7d4; --ink:#17261d; --muted:#4b5e51;
+  --gold:#d2a94b; --gold2:#8f6d1c; --rose:#a8232f; --good:#1f6d3c; --bad:#a3302a; --line:rgba(23,38,29,.2);
+  --display:'Cinzel',Georgia,'Times New Roman',serif;
+  --body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  color-scheme:dark;
+}
+html{font-size:18px}
+html.big{font-size:24px}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; background-color:var(--bg); color:#eef2e6; font:400 1rem/1.55 var(--body);
+  padding-block:0 3rem;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  background-image:linear-gradient(45deg,rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(-45deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:44px 44px; min-height:100vh;
+}
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.2;margin:0;text-wrap:balance}
+p{margin:0 0 .8em}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.wrap{max-width:1000px;margin-inline:auto}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;justify-content:space-between;padding-block:.8rem;max-width:1000px;margin-inline:auto}
+.brand{display:flex;align-items:center;gap:.5rem;background:none;border:0;cursor:pointer;font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--gold);padding:.2rem}
+.brand svg{width:34px;height:34px}
+.favour{display:flex;align-items:center;gap:.5rem;font-size:.85rem}
+.favour .lbl{font-family:var(--display);color:var(--gold);letter-spacing:.06em;text-transform:uppercase;font-size:.75rem}
+.meter{width:130px;height:12px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}
+.meter i{display:block;height:100%;width:30%;background:linear-gradient(90deg,var(--rose),var(--gold));transition:width .5s}
+.favour b{min-width:2ch;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:.4rem;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.08);border:1.5px solid rgba(210,169,75,.6);color:#f4ecd2;border-radius:99px;padding:.3rem .85rem;font-size:.85rem;cursor:pointer;min-height:36px}
+.chip:hover{background:rgba(210,169,75,.2)}
+
+/* generic */
+.panel{background:var(--panel);color:var(--ink);border-radius:14px;padding:1.2rem 1.4rem;box-shadow:0 10px 28px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.4)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border-radius:10px;border:2px solid transparent;padding:.6em 1.2em;font-weight:700;cursor:pointer;min-height:44px;text-align:center}
+.btn.primary{background:var(--gold);color:#241a05}
+.btn.primary:hover{background:#e2bb5c}
+.btn.ghost{background:transparent;border-color:var(--gold2);color:var(--ink)}
+.btn.ghost:hover{background:rgba(143,109,28,.12)}
+.btn.onDark{border-color:var(--gold);color:var(--gold)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.9rem}
+.row.end{justify-content:flex-end}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.frame{border:5px solid var(--gold);outline:2px solid var(--gold2);border-radius:10px;background:#000;box-shadow:0 8px 20px rgba(0,0,0,.45);overflow:hidden;line-height:0}
+.frame svg{width:100%;height:auto;display:block}
+.stars{color:var(--gold);letter-spacing:.1em}
+.stars .off{color:rgba(120,120,100,.6)}
+
+/* title */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,320px);gap:2rem;align-items:center;padding-block:1.5rem}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);color:var(--gold)}
+.hero .sub{font-size:1.2rem;margin:.8rem 0 1.4rem;max-width:34ch}
+.namebox{display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end;margin-bottom:.8rem}
+.namebox label{display:block;font-size:.85rem;color:var(--gold);margin-bottom:.2rem}
+.namebox input{font:inherit;padding:.6em .8em;border-radius:10px;border:2px solid var(--gold);background:#fff;color:var(--ink);min-height:44px;width:15rem;max-width:100%}
+.toggles{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin:.6rem 0 1rem}
+.toggles label{display:flex;align-items:center;gap:.4rem;cursor:pointer}
+.toggles input{width:1.15em;height:1.15em;accent-color:var(--gold)}
+.heroart{display:grid;gap:1rem;justify-items:center}
+.heroart .frame{width:min(100%,260px)}
+.roseBig svg{width:110px;height:110px}
+.safety{font-size:.8rem;color:#b9c6b5;max-width:48ch}
+
+/* hub */
+.hubhead{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:end;margin:.6rem 0 1.2rem}
+.hubhead h2{color:var(--gold);font-size:1.7rem}
+.hubnav{display:flex;flex-wrap:wrap;gap:.4rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:1rem}
+.chcard{display:flex;flex-direction:column;gap:.35rem;text-align:left;background:rgba(255,255,255,.07);border:2px solid rgba(210,169,75,.5);border-radius:14px;padding:.8rem;cursor:pointer;color:#f4f1e4;min-width:0}
+.chcard:hover{background:rgba(255,255,255,.13)}
+.chcard .no{font-family:var(--display);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.chcard .ctitle{font-family:var(--display);font-weight:800;font-size:1.02rem;line-height:1.2}
+.chcard .cyears{font-size:.85rem;color:#c8d3c4}
+.chcard .cstat{font-size:.9rem;font-weight:700}
+.chcard.locked{opacity:.55;cursor:not-allowed}
+.chcard.locked .frame{filter:grayscale(1) brightness(.7)}
+.chcard.done{border-color:var(--gold)}
+
+/* play */
+.bar{height:8px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden;margin:.4rem 0 1.2rem}
+.bar i{display:block;height:100%;background:var(--gold);width:0;transition:width .4s}
+.playhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.5rem}
+.playhead .ct{font-family:var(--display);color:var(--gold);font-size:1rem}
+.scene{display:grid;grid-template-columns:minmax(140px,210px) minmax(0,1fr);gap:1.4rem;align-items:start}
+.who{display:grid;gap:.5rem;justify-items:center}
+.who .frame{width:100%}
+.nameplate{font-family:var(--display);font-size:.8rem;text-align:center;color:var(--gold);letter-spacing:.04em}
+.bubble p{font-size:1.08rem}
+.datebadge{font-family:var(--display);font-weight:800;font-size:2.2rem;color:var(--rose);line-height:1;margin-bottom:.3rem;font-variant-numeric:tabular-nums}
+.q{font-family:var(--display);font-size:1.25rem;font-weight:800;margin-bottom:.8rem}
+.tag{display:inline-block;font-size:.75rem;font-family:var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--gold);border-radius:6px;padding:.15em .6em;margin-bottom:.6rem}
+.opts{display:grid;gap:.55rem}
+.opt{display:block;width:100%;text-align:left;background:#fff;color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.65em .95em;cursor:pointer;min-height:44px}
+.opt:hover:not([disabled]){border-color:var(--gold2);background:#fffdf3}
+.opt.ok{border-color:var(--good);background:#e0f2e5}
+.opt.ok::before{content:"✓ ";font-weight:700;color:var(--good)}
+.opt.no{border-color:var(--bad);background:#f8e2df}
+.opt.no::before{content:"✗ ";font-weight:700;color:var(--bad)}
+.opt.sel{border-color:var(--gold2);background:#fff6d8}
+.opt[disabled]{cursor:default}
+.fb{margin-top:.9rem;padding:.8rem 1rem;border-radius:10px;background:var(--panel2);border-left:6px solid var(--gold2)}
+.fb.good{border-left-color:var(--good)}
+.fb.bad{border-left-color:var(--bad)}
+.fb b{font-family:var(--display)}
+.favchg{font-weight:700}
+.favchg.up{color:var(--good)}
+.favchg.down{color:var(--bad)}
+.voterow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem;align-items:center}
+.vote{border:2px solid var(--gold2);background:#fff;border-radius:10px;min-height:44px;min-width:76px;padding:.3em .7em;cursor:pointer;font-weight:700;color:var(--ink)}
+.slots{display:grid;gap:.45rem;margin-bottom:.9rem}
+.slot{display:flex;gap:.7rem;align-items:center;border:2px dashed var(--line);border-radius:10px;padding:.5em .8em;min-height:46px}
+.slot .n{font-family:var(--display);font-weight:800;color:var(--gold2);min-width:1.4em}
+.slot.filled{border-style:solid;border-color:var(--good);background:#e0f2e5}
+.slot .s{margin-left:auto;font-family:var(--display);font-weight:800;color:var(--rose)}
+.pool{display:flex;flex-wrap:wrap;gap:.5rem}
+.pool .opt{width:auto;flex:1 1 220px}
+.cardq{background:#fff;border:2px solid var(--gold2);border-radius:12px;padding:1rem 1.1rem;font-size:1.15rem;margin-bottom:.9rem;min-height:4.5rem;display:flex;align-items:center}
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.55rem}
+.bucket{background:var(--ink);color:#f6eed0;border:2px solid var(--gold);border-radius:10px;padding:.6em .8em;cursor:pointer;text-align:left;min-height:44px}
+.bucket b{display:block;font-family:var(--display)}
+.bucket span{font-size:.8rem;opacity:.85}
+.bucket:hover:not([disabled]){background:#24402f}
+.bucket[disabled]{opacity:.45;cursor:default}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.6rem 1rem}
+.cols .opt{font-size:.95rem}
+.opt.done{border-color:var(--good);background:#e0f2e5;opacity:.8}
+.opt.done::before{content:"✓ ";color:var(--good);font-weight:700}
+.dots{display:flex;gap:.3rem;margin:.2rem 0 .8rem}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--gold2)}
+.reward{display:grid;grid-template-columns:minmax(130px,200px) minmax(0,1fr);gap:1.2rem;align-items:start}
+.fate{display:inline-block;background:var(--rose);color:#fff;font-family:var(--display);font-weight:800;padding:.2em .8em;border-radius:6px;margin:.3rem 0 .6rem}
+.reward ul{margin:.2rem 0 .8rem;padding-left:1.2rem}
+.reward li{margin-bottom:.25rem}
+
+/* result */
+.cert{border:4px double var(--gold2);border-radius:10px;padding:1.4rem 1rem;text-align:center;background:#fbfaf0}
+.cert h2{font-size:1.9rem;color:var(--rose)}
+.cert .rank{font-family:var(--display);font-size:1.6rem;font-weight:800;margin:.5rem 0}
+.cert svg{width:70px;height:70px}
+.stats{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:.8rem}
+.stat{background:var(--panel2);border-radius:10px;padding:.5rem 1rem;min-width:7rem}
+.stat b{display:block;font-family:var(--display);font-size:1.4rem;font-variant-numeric:tabular-nums}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(4,14,9,.78);display:grid;place-items:center;z-index:50;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet{width:min(740px,100%);max-height:100%;overflow:auto}
+.sheethead{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.8rem}
+.sheethead h2{font-size:1.4rem}
+.sheet .chip{background:var(--ink);color:#f6eed0}
+.tl{list-style:none;margin:0;padding:0;border-left:3px solid var(--gold2)}
+.tl li{position:relative;padding:.35rem 0 .35rem 1.2rem;display:grid;grid-template-columns:3.6rem minmax(0,1fr);gap:.5rem}
+.tl li::before{content:"";position:absolute;left:-8px;top:.85rem;width:13px;height:13px;border-radius:50%;background:var(--gold2);border:2px solid var(--panel)}
+.tl li.lock{opacity:.5}
+.tl li.lock::before{background:var(--panel2);border-color:var(--gold2)}
+.tl .y{font-family:var(--display);font-weight:800;color:var(--rose);font-variant-numeric:tabular-nums}
+.wordlist{display:grid;gap:.5rem}
+.wordlist div{padding:.5rem .8rem;background:#fff;border-radius:8px;border:1px solid var(--line)}
+.wordlist b{font-family:var(--display)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem}
+.gallery figure{margin:0;text-align:center;font-size:.85rem}
+.gallery figcaption b{display:block;font-family:var(--display)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:.4rem .5rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--display);font-size:.8rem}
+.scroll{overflow-x:auto}
+textarea{width:100%;font:inherit;font-size:.85rem;padding:.5rem;border-radius:8px;border:1px solid var(--line);min-height:6rem;background:#fff;color:var(--ink)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(20px,env(safe-area-inset-bottom,0px));background:var(--ink);color:#f6eed0;border:2px solid var(--gold);border-radius:10px;padding:.55em 1.1em;z-index:60;max-width:90vw;text-align:center}
+.term{background:none;border:0;border-bottom:2px dotted var(--gold2);color:inherit;font:inherit;padding:0;cursor:help;font-weight:700}
+.defn{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px));width:min(560px,calc(100% - 32px));z-index:55}
+.defn b{font-family:var(--display);text-transform:capitalize}
+.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none;outline:3px solid var(--bad)}.meter i,.bar i{transition:none}}
+
+@media (max-width:700px){
+  .hero{grid-template-columns:1fr}
+  .heroart{order:-1}
+  .heroart .frame{width:150px}
+  .roseBig{display:none}
+  .scene,.reward{grid-template-columns:1fr}
+  .who{max-width:140px;margin-inline:auto}
+  .reward .frame{max-width:150px}
+  .cols{grid-template-columns:1fr}
+  .meter{width:90px}
+}
+</style>
+
+<header class="top" id="top">
+  <button class="brand" data-act="home" aria-label="Go to the start"><span id="brandrose"></span><span>Henry’s Court</span></button>
+  <div class="favour" id="favour" hidden><span class="lbl">Favour</span><div class="meter" role="progressbar" aria-label="Favour with the king" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30"><i></i></div><b id="favnum">30</b></div>
+  <nav class="tools" aria-label="Tools">
+    <button class="chip" data-act="modal" data-arg="timeline">Timeline</button>
+    <button class="chip" data-act="modal" data-arg="words">Words</button>
+    <button class="chip" data-act="modal" data-arg="settings">Settings</button>
+  </nav>
+</header>
+<main id="app" class="wrap"></main>
+<div id="modal" class="modal" hidden>
+  <div class="sheet panel" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <div class="sheethead"><h2 id="mt"></h2><button class="chip" data-act="close">Close</button></div>
+    <div id="mb"></div>
+  </div>
+</div>
+<div id="defn" class="defn panel" role="status" hidden></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<noscript>This game needs JavaScript. Please turn it on in your browser.</noscript>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- helpers ---------- */
+const $=(s,r)=>(r||document).querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+function fmt(s){
+  return s.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,(m,k,d)=>'<button type="button" class="term" data-term="'+k.toLowerCase()+'">'+(d||k)+'</button>')
+          .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+}
+function plain(s){return s.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,(m,k,d)=>d||k).replace(/\*\*/g,'');}
+
+/* ---------- glossary ---------- */
+const GL={
+ 'court':'The king’s household: his family, advisers, servants and friends.',
+ 'jester':'An entertainer at court who made people laugh. A jester could sometimes say things nobody else dared to.',
+ 'wars of the roses':'A long struggle (1455–1487) between two branches of the royal family, Lancaster (red rose) and York (white rose), over who should be king.',
+ 'heir':'The person who is next in line to inherit the throne.',
+ 'dispensation':'Special permission from the Pope to break a Church rule.',
+ 'civil war':'A war between groups of people inside the same country.',
+ 'pope':'The leader of the Catholic Church, who lives in Rome.',
+ 'annulment':'An official ruling that a marriage was never valid in law. It is not quite the same as a divorce.',
+ 'lady-in-waiting':'A woman who served and kept company with the queen.',
+ 'act of supremacy':'A law of 1534 that made the king, not the Pope, head of the Church in England.',
+ 'reformation':'A great change in 1500s Europe when many Christians broke away from the Pope and the Catholic Church.',
+ 'treason':'The crime of betraying your king or country. In Tudor times the punishment could be death.',
+ 'monastery':'A building where monks live, pray and work. Many owned lots of land and treasure.',
+ 'dissolution':'Closing something down. Between 1536 and 1540 Henry closed all of England’s monasteries.',
+ 'alliance':'An agreement between countries to help and protect each other.',
+ 'primary source':'Something made at the time you are studying, such as a portrait, a letter or a diary.',
+ 'propaganda':'Pictures or words made to change what people think, not just to tell the truth.',
+ 'bias':'Showing support for one side without being fair.',
+ 'regent':'Someone who rules the country for a king who is away, ill or too young.',
+ 'succession':'Who will be the next king or queen, and in what order.',
+ 'evidence':'Facts or sources that help show whether something is true.',
+ 'parliament':'A group of people who help to make a country’s laws. Henry needed Parliament to pass his big changes.'
+};
+
+/* ---------- portraits ---------- */
+const P={
+ will:{bg:'#7a2a35',skin:'#f0c9a6',hair:'#5a3a22',hat:'jester',dress:'#d2a94b',trim:'#a8232f',mood:'grin'},
+ henryY:{bg:'#26493a',skin:'#f4d0b0',hair:'#b8582a',hat:'bonnet',dress:'#7a1f2b',trim:'#d2a94b',mood:'smile',chain:1},
+ henry:{bg:'#26493a',skin:'#f1c6a2',hair:'#a2461f',hat:'bonnet',dress:'#7a1f2b',trim:'#d2a94b',mood:'neutral',beard:1,broad:1,chain:1,fur:1},
+ cathA:{bg:'#3c3552',skin:'#f1cfb0',hair:'#6d4326',hat:'gable',hood:'#1c1c22',dress:'#3b2a63',trim:'#d2a94b',mood:'smile'},
+ anneB:{bg:'#2d2c3e',skin:'#e8c19d',hair:'#2a1b15',hat:'french',hood:'#1c1c22',dress:'#1d1d26',trim:'#d2a94b',mood:'smile',B:1},
+ jane:{bg:'#47546b',skin:'#f6dcc3',hair:'#cfa86a',hat:'gable',hood:'#f4f1e6',dress:'#c9d3e6',trim:'#d2a94b',mood:'smile'},
+ anneC:{bg:'#2f5a45',skin:'#efc9a8',hair:'#74472b',hat:'cleves',hood:'#14281e',dress:'#2c6a4a',trim:'#d2a94b',mood:'smile'},
+ cathH:{bg:'#5a2430',skin:'#f6d6bc',hair:'#8a3f22',hat:'french',hood:'#7a1f2b',dress:'#a8232f',trim:'#d2a94b',mood:'worried'},
+ cathP:{bg:'#4d3a1d',skin:'#f1cdb0',hair:'#a85b2b',hat:'french',hood:'#d2a94b',dress:'#9c6b1a',trim:'#f4ecd2',mood:'smile'},
+ edward:{bg:'#3a4f7a',skin:'#f6d9bf',hair:'#d9ac62',hat:'bonnet',dress:'#2d4f9a',trim:'#d2a94b',mood:'smile'},
+ mary:{bg:'#43263b',skin:'#f1d0b4',hair:'#4a2a1d',hat:'french',hood:'#1c1c22',dress:'#6b1f3c',trim:'#d2a94b',mood:'neutral'},
+ elizabeth:{bg:'#2a3f5e',skin:'#f8e1cc',hair:'#c2461c',hat:'crown',dress:'#e9e4d3',trim:'#d2a94b',mood:'smile',long:1}
+};
+const NAMES={will:'Will Somers, jester',henryY:'Prince Henry',henry:'King Henry VIII',cathA:'Catherine of Aragon',anneB:'Anne Boleyn',jane:'Jane Seymour',anneC:'Anne of Cleves',cathH:'Catherine Howard',cathP:'Catherine Parr',edward:'Edward VI',mary:'Mary I',elizabeth:'Elizabeth I'};
+function portrait(key){
+  const p=P[key],sk=p.skin,hr=p.hair,tr=p.trim,hd=p.hood||'#1c1c22';let s='';
+  s+='<rect width="120" height="140" fill="'+p.bg+'"/><path d="M0 0L120 140M120 0L0 140" stroke="#fff" stroke-opacity=".06"/>';
+  if(p.hat==='french') s+='<path d="M30 52Q22 100 32 126L44 126Q38 96 41 64Z" fill="#14141a"/><path d="M90 52Q98 100 88 126L76 126Q82 96 79 64Z" fill="#14141a"/>';
+  if(p.hat==='gable') s+='<path d="M41 90L41 54L60 34L79 54L79 90Z" fill="'+hr+'"/>';
+  s+='<path d="'+(p.broad?'M0 140C2 104 30 96 60 96C90 96 118 104 120 140Z':'M8 140C12 106 34 98 60 98C86 98 108 106 112 140Z')+'" fill="'+p.dress+'"/>';
+  if(p.long) s+='<path d="M32 56C24 100 32 120 44 124L76 124C88 120 96 100 88 56Z" fill="'+hr+'"/>';
+  if(p.fur) s+='<path d="M28 106Q60 132 92 106Q94 96 60 94Q26 96 28 106Z" fill="#efe9d6"/><path d="M34 106Q60 124 86 106" stroke="#cfc6a8" stroke-width="2" fill="none" stroke-dasharray="3 4"/>';
+  else s+='<path d="M40 100L52 114H68L80 100Z" fill="'+sk+'"/><path d="M36 99L50 116H70L84 99" fill="none" stroke="'+tr+'" stroke-width="4" stroke-linejoin="round"/>';
+  s+='<rect x="52" y="82" width="16" height="22" fill="'+sk+'"/>';
+  if(p.hat==='cleves') s+='<path d="M30 92L30 46L90 46L90 92Z" fill="'+hr+'"/>';
+  s+='<ellipse cx="60" cy="62" rx="22" ry="26" fill="'+sk+'"/>';
+  // hair front
+  if(p.hat==='french'||p.hat==='crown'||p.hat==='cleves') s+='<path d="M38 62Q36 36 60 34Q84 36 82 62L82 50Q60 40 38 50Z" fill="'+hr+'"/>';
+  if(p.hat==='bonnet') s+='<path d="M37 52Q33 72 40 84L41 58Z" fill="'+hr+'"/><path d="M83 52Q87 72 80 84L79 58Z" fill="'+hr+'"/>';
+  // face
+  s+='<circle cx="47" cy="70" r="4.5" fill="#e58a7b" opacity=".35"/><circle cx="73" cy="70" r="4.5" fill="#e58a7b" opacity=".35"/>';
+  s+='<circle cx="51" cy="62" r="2.4" fill="#2a1f1a"/><circle cx="69" cy="62" r="2.4" fill="#2a1f1a"/>';
+  const bw=p.mood==='worried'?['M46 54L55 56','M74 54L65 56']:['M46 55L55 54','M74 55L65 54'];
+  s+='<path d="'+bw[0]+'" stroke="#3a2a20" stroke-width="1.8" stroke-linecap="round"/><path d="'+bw[1]+'" stroke="#3a2a20" stroke-width="1.8" stroke-linecap="round"/>';
+  s+='<path d="M60 64L58 71L62 71" fill="none" stroke="#b78d70" stroke-width="1.3" stroke-linecap="round"/>';
+  if(p.beard) s+='<path d="M39 68C38 98 82 98 81 68C76 84 44 84 39 68Z" fill="'+hr+'"/>';
+  const mouth={smile:'M52 76Q60 82 68 76',grin:'M49 74Q60 87 71 74Z',neutral:'M53 78L67 78',worried:'M53 80Q60 75 67 80'}[p.mood];
+  s+='<path d="'+mouth+'" fill="'+(p.mood==='grin'?'#fff':'none')+'" stroke="#8a2f2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  // hats
+  if(p.hat==='bonnet'){
+    s+='<path d="M32 50C32 22 88 22 88 50C80 40 40 40 32 50Z" fill="#17171b"/><ellipse cx="60" cy="45" rx="30" ry="6" fill="#17171b"/><path d="M82 34C102 18 110 42 92 52" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>';
+  }
+  if(p.hat==='gable'){
+    s+='<path d="M34 90L34 50L60 22L86 50L86 90L79 90L79 54L60 34L41 54L41 90Z" fill="'+hd+'"/><path d="M41 54L60 34L79 54" fill="none" stroke="'+tr+'" stroke-width="2.5"/>';
+    if(hd!=='#1c1c22') s+='<path d="M41 54L60 34L79 54" fill="none" stroke="#c7bfa6" stroke-width="1" stroke-dasharray="2 3"/>';
+  }
+  if(p.hat==='french'){
+    s+='<path d="M33 60Q31 24 60 24Q89 24 87 60Q84 40 60 38Q36 40 33 60Z" fill="'+hd+'"/>';
+    [[37,44],[42,35],[50,29],[60,26.5],[70,29],[78,35],[83,44]].forEach(c=>{s+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="2.2" fill="#fff" stroke="#bbb" stroke-width=".4"/>';});
+  }
+  if(p.hat==='cleves'){
+    s+='<path d="M26 94L28 42Q60 16 92 42L94 94L86 94L83 52Q60 36 37 52L34 94Z" fill="'+hd+'"/><path d="M37 52Q60 36 83 52" fill="none" stroke="'+tr+'" stroke-width="3"/><path d="M38 52Q60 40 82 52L82 47Q60 36 38 47Z" fill="#fff"/>';
+  }
+  if(p.hat==='jester'){
+    s+='<path d="M36 50Q24 30 10 38Q22 42 28 56Z" fill="#a8232f"/><circle cx="10" cy="38" r="4.5" fill="#d2a94b"/><path d="M84 50Q96 30 110 38Q98 42 92 56Z" fill="#e0b73a"/><circle cx="110" cy="38" r="4.5" fill="#d2a94b"/><path d="M34 52Q60 8 86 52Q60 42 34 52Z" fill="#a8232f"/><path d="M60 14Q56 36 60 46" stroke="#e0b73a" stroke-width="5" fill="none"/><circle cx="60" cy="14" r="4.5" fill="#d2a94b"/>';
+  }
+  if(p.hat==='crown'){
+    s+='<path d="M41 40L43 24L52 32L60 18L68 32L77 24L79 40Z" fill="#d2a94b" stroke="#8f6d1c" stroke-width="1.5"/><circle cx="60" cy="24" r="2" fill="#a8232f"/>';
+  }
+  if(p.chain) s+='<path d="M32 104Q60 134 88 104" fill="none" stroke="#d2a94b" stroke-width="3.5" stroke-linecap="round" stroke-dasharray=".1 5.5"/>';
+  if(p.B){
+    s+='<path d="M44 104Q60 118 76 104" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray=".1 4.6"/><text x="60" y="127" text-anchor="middle" font-size="12" font-weight="800" fill="#d2a94b" font-family="Cinzel,serif">B</text>';
+  }
+  return '<svg viewBox="0 0 120 140" role="img" aria-label="Portrait of '+esc(NAMES[key])+'">'+s+'</svg>';
+}
+const pf=(k,c)=>'<div class="frame '+(c||'')+'">'+portrait(k)+'</div>';
+function rose(size){
+  let s='';
+  for(let i=0;i<5;i++){const a=i*72;s+='<circle cx="0" cy="-24" r="17" fill="#a8232f" stroke="#7a1a22" stroke-width="2" transform="rotate('+a+')"/>';}
+  for(let i=0;i<5;i++){const a=i*72+36;s+='<circle cx="0" cy="-13" r="10" fill="#fff" stroke="#d9d4c0" stroke-width="1.5" transform="rotate('+a+')"/>';}
+  s+='<circle r="8" fill="#d2a94b" stroke="#8f6d1c" stroke-width="1.5"/>';
+  return '<svg viewBox="-48 -48 96 96" width="'+size+'" height="'+size+'" aria-hidden="true">'+s+'</svg>';
+}
+
+/* ---------- timeline ---------- */
+const TL=[
+ ['bosworth',1485,'Battle of Bosworth. Henry Tudor becomes Henry VII.'],
+ ['born',1491,'Henry VIII is born, the second son.'],
+ ['arthur',1502,'Prince Arthur dies. Henry becomes heir.'],
+ ['king',1509,'Henry becomes king and marries Catherine of Aragon.'],
+ ['mary',1516,'Princess Mary is born.'],
+ ['asks',1527,'Henry asks the Pope for an annulment.'],
+ ['wolsey',1529,'Cardinal Wolsey falls from power.'],
+ ['annul',1533,'Henry’s first marriage is declared void.'],
+ ['anne',1533,'Henry marries Anne Boleyn. Princess Elizabeth is born.'],
+ ['supremacy',1534,'Act of Supremacy. Henry heads the Church of England.'],
+ ['annedead',1536,'Anne Boleyn is executed.'],
+ ['jane',1536,'Henry marries Jane Seymour.'],
+ ['dissol',1536,'The monasteries begin to close.'],
+ ['edward',1537,'Prince Edward is born. Jane dies twelve days later.'],
+ ['cleves',1540,'Henry marries Anne of Cleves in January. It is annulled in July.'],
+ ['cromwell',1540,'Thomas Cromwell loses power and is executed.'],
+ ['howard',1540,'Henry marries Catherine Howard in July.'],
+ ['howarddead',1542,'Catherine Howard is executed.'],
+ ['parr',1543,'Henry marries Catherine Parr.'],
+ ['regent',1544,'Catherine Parr is regent while Henry fights in France. Mary and Elizabeth return to the line of succession.'],
+ ['henrydies',1547,'Henry dies. Edward VI becomes king at nine years old.'],
+ ['maryq',1553,'Mary I becomes queen.'],
+ ['eliz',1558,'Elizabeth I becomes queen.']
+];
+
+/* ---------- chapters ---------- */
+const CH=[
+{title:'A Spare Prince',years:'1485–1509',who:'henryY',steps:[
+ {t:'story',who:'will',text:"Welcome to the [[court]], new advisor! I’m Will Somers, the king’s [[jester]]. I was a real person, and I made King Henry laugh for years. Here is some advice: stay clever, stay honest and stay in favour. You will need all three."},
+ {t:'story',who:'will',date:'1485',ev:'bosworth',text:"Our story starts before Henry was born. In 1485, Henry Tudor beat King Richard III at the Battle of Bosworth. This ended the [[Wars of the Roses]]. Henry Tudor became Henry VII and married Elizabeth of York to join the two families. The red and white Tudor rose shows that."},
+ {t:'quiz',label:'The Tudor rose',q:'The Tudor rose is red and white. What do the two colours stand for?',opts:['Red for the House of Lancaster, white for the House of York','Red for England, white for Wales','Red for the king, white for the queen'],ans:0,hint:'Think about the two sides in the Wars of the Roses.',why:'Lancaster used a red rose and York used a white one. Henry VII joined them in one rose to show the fighting was over.'},
+ {t:'story',who:'henryY',date:'1491',ev:'born',text:"I was born in 1491, the second son of the king. My brother Arthur was the [[heir]], so nobody expected me to rule. I was happy to ride, joust, sing and write songs."},
+ {t:'story',who:'will',date:'1502',ev:'arthur',text:"In 1501, Arthur married a Spanish princess called Catherine of Aragon. In 1502, Arthur died. Suddenly, ten-year-old Henry was the heir."},
+ {t:'story',who:'henryY',date:'1509',ev:'king',text:"My father died in 1509 and I became King Henry VIII at just seventeen. I was tall, sporty and loved music and jousting. Within weeks I married Catherine, my brother’s widow."},
+ {t:'order',label:'Putting events in order',q:'Put these events in the right order, earliest first. Tap them one at a time.',items:[{t:'Battle of Bosworth',s:'1485'},{t:'Henry VIII is born',s:'1491'},{t:'Prince Arthur dies',s:'1502'},{t:'Henry becomes king',s:'1509'}],hint:'Start with the battle that began the Tudor family on the throne.',why:'You have built the start of your Tudor timeline. Find it under the Timeline button.'},
+ {t:'reflect',q:'Henry was never supposed to be king. How might that have shaped the kind of king he became?',pts:['What do you think Henry wanted to prove?','Would you act differently if you grew up as the spare?','Why was having an heir so important to a king?']},
+ {t:'reward',card:{who:'henryY',name:'Henry VIII',line:'1491–1547',fate:'The Spare Who Became King',facts:['Became king in 1509, aged 17.','His brother Arthur died in 1502.','His father, Henry VII, began the Tudor family on the throne in 1485.']}}
+]},
+{title:'The Spanish Queen',years:'1509–1533',who:'cathA',steps:[
+ {t:'story',who:'cathA',date:'1509',text:"I am Catherine, a princess of Spain. In 1509 I became Henry’s queen. I was clever, kind and loved by the people. The Pope had given a special permission, a [[dispensation]], so I could marry my late husband’s brother."},
+ {t:'story',who:'will',date:'1516',ev:'mary',text:"Catherine had several babies, but most did not live. Only Princess Mary, born in 1516, survived. Henry loved Mary, but he wanted a son. England had never had a queen who ruled in her own right, and Henry feared a daughter might lose the throne. He also worried about another [[civil war]]."},
+ {t:'story',who:'henry',date:'1527',ev:['asks','wolsey'],text:"Catherine is no longer young and I have no son! I have fallen in love with Anne Boleyn, a [[lady-in-waiting]] at court. I will ask the [[Pope]] for an [[annulment]], a ruling that my first marriage was never valid. Cardinal Wolsey, my chief minister, must arrange it."},
+ {t:'decision',who:'henry',label:'How to get the annulment',q:'Advisor, the Pope is taking far too long! What should I do?',opts:[
+   {l:'Keep asking the Pope and wait patiently.',fav:-4,res:'Henry tried this for six years. The Pope was under the control of Catherine’s nephew, the powerful Emperor Charles V, and never agreed. Cardinal Wolsey lost his job in 1529 for failing.'},
+   {l:'Ask scholars at universities across Europe for their opinion.',fav:4,res:'Henry really did this, and some scholars agreed with him. But the Pope still said no.'},
+   {l:'Break away from the Pope. Make the king head of the Church in England.',fav:8,res:'This is what Henry finally did, with help from Thomas Cromwell and Thomas Cranmer. It started the English Reformation, and it changed England for ever.'}
+ ]},
+ {t:'story',who:'will',date:'1533',ev:'annul',text:"In 1533, Thomas Cranmer, the new Archbishop of Canterbury, ruled that Henry’s marriage to Catherine had never been valid. Catherine was sent away from court and lost the title of queen. Mary was told she was no longer a princess. Catherine died in 1536."},
+ {t:'match',label:'Who’s who in the annulment',q:'Match each person to what they did. Tap one on the left, then its partner on the right.',pairs:[['Cardinal Wolsey','Henry’s chief minister. He failed to get the annulment.'],['Pope Clement VII','Head of the Catholic Church in Rome.'],['Emperor Charles V','Catherine’s nephew and a very powerful ruler.'],['Thomas Cranmer','Archbishop who declared the marriage void in 1533.']],why:'Henry’s problem was partly about family, partly about power. The Pope would not upset the Emperor.'},
+ {t:'quiz',label:'Why Henry wanted a son',q:'Why did Henry badly want a son?',opts:['He wanted to keep the Tudor family on the throne and avoid another civil war','The law said only sons could be born to a king','The Pope had ordered him to have a son'],ans:0,hint:'Think about what had happened before Henry VII won at Bosworth.',why:'The Tudors were still a fairly new royal family. Henry wanted a strong male heir to keep the throne safe.'},
+ {t:'reflect',q:'Henry had his reasons, but Catherine and Mary lost out. Was Henry fair?',pts:['How do you think Catherine felt?','Were Henry’s worries good reasons for his actions?','Who had the power to say no to the king?']},
+ {t:'reward',card:{who:'cathA',name:'Catherine of Aragon',line:'Queen 1509–1533',fate:'Divorced',facts:['Born in Spain, a princess and very well educated.','Mother of Princess Mary.','Her marriage was declared void in 1533.']}}
+]},
+{title:'The Boleyn Girl',years:'1533–1536',who:'anneB',steps:[
+ {t:'story',who:'anneB',date:'1533',ev:'anne',text:"I am Anne Boleyn. I grew up partly in France, and I was clever, witty and good at music. Henry loved me, but I wanted more than to be a favourite: I wanted to be queen. We married secretly in January 1533. I was crowned in June, and my daughter Elizabeth was born in September."},
+ {t:'story',who:'henry',date:'1534',ev:'supremacy',text:"I am now Supreme Head of the Church of England. The [[Act of Supremacy]] says so. The [[Reformation]] is sweeping through Europe, and I will lead the Church in my own country. [[Parliament]] has agreed to all of it."},
+ {t:'decision',who:'henry',label:'The Oath of Supremacy',q:'Everyone important must swear an oath that I am head of the Church. Will you take it?',opts:[
+   {l:'Yes, I will swear the oath.',fav:4,res:'Most people swore the oath, even if they privately disagreed. It kept them safe.'},
+   {l:'No, I refuse.',fav:-10,res:'Sir Thomas More refused. He had been a loyal servant of Henry, but he was executed for [[treason]] in 1535. Henry did not tolerate people who said no.'},
+   {l:'I need more time to think about it.',fav:-3,res:'Henry’s officials wanted a quick answer. Taking too long made them suspicious.'}
+ ]},
+ {t:'story',who:'will',date:'1536',ev:'annedead',text:"Anne had lost babies since Elizabeth, and Henry still had no son. Anne also had enemies at court, including Thomas Cromwell. In May 1536 she was accused of [[treason]] and put on trial. Many historians today think the evidence was very weak. Anne was executed on 19 May 1536 at the Tower of London."},
+ {t:'sort',label:'Fact, rumour or opinion',q:'Sort these statements about Anne. Tap the best label for each one.',buckets:[{id:'f',l:'Fact',d:'We can check it'},{id:'r',l:'Rumour',d:'A story with no proof'},{id:'o',l:'Opinion',d:'What someone thinks'}],cards:[
+   {t:'Anne gave birth to Princess Elizabeth in 1533.',b:'f',why:'Records of Elizabeth’s birth survive. A real, checkable fact.'},
+   {t:'Anne put a spell on Henry.',b:'r',why:'Her enemies spread stories like this. There is no proof at all.'},
+   {t:'Anne was the cleverest woman at court.',b:'o',why:'People can disagree about this. It is a view, not a fact.'},
+   {t:'In 1534, Henry became head of the Church of England.',b:'f',why:'The Act of Supremacy is a law we can still read.'},
+   {t:'Anne had six fingers on one hand.',b:'r',why:'This was made up long after her death by someone who disliked her.'},
+   {t:'Anne was executed at the Tower of London in 1536.',b:'f',why:'Many sources agree on this.'}
+ ]},
+ {t:'quiz',label:'Questioning stories',q:'Anne’s enemies told stories about her. Which is the best question to ask about those stories?',opts:['Who told this story, and what did they gain from it?','How many people have repeated it?','Is it an exciting story?'],ans:0,hint:'A good historian asks about the person telling the story.',why:'Powerful people sometimes spread stories to win power or favour. Always ask who is speaking and why. This is called looking for [[bias|bias]].'},
+ {t:'reflect',q:'Henry changed the whole Church to marry Anne, but she was gone within three years.',pts:['Why do you think things went wrong so quickly?','Who benefited from Anne’s downfall?','How can we tell if a story from the past is true?']},
+ {t:'reward',card:{who:'anneB',name:'Anne Boleyn',line:'Queen 1533–1536',fate:'Beheaded',facts:['Mother of Elizabeth I.','Crowned queen in June 1533.','Executed at the Tower of London on 19 May 1536.']}}
+]},
+{title:'The Longed-For Son',years:'1536–1537',who:'jane',steps:[
+ {t:'story',who:'jane',date:'1536',ev:'jane',text:"I am Jane Seymour. I served both Catherine and Anne as a [[lady-in-waiting]]. Henry and I married on 30 May 1536, only eleven days after Anne’s death. I am quiet and calm, and I hoped to bring Princess Mary back to court."},
+ {t:'story',who:'will',date:'1536',ev:'dissol',text:"Henry needed money and wanted to control the Church. So he began closing England’s [[monastery|monasteries]] and taking their land and treasure. This is called the [[dissolution]]. Some people in the north protested in the Pilgrimage of Grace, but the rising failed."},
+ {t:'decision',who:'henry',label:'What to do with monastery land',q:'The monasteries’ land is mine now! What should I do with it?',opts:[
+   {l:'Sell lots of it to nobles and gentry so they stay loyal to me.',fav:5,res:'Most land was sold or given to rich families. They then supported Henry’s changes, because they did not want to lose their new land.'},
+   {l:'Use the money for ships and forts to defend the coast.',fav:5,res:'Henry spent a great deal on warships and forts, because he feared France and Spain might attack.'},
+   {l:'Give it all to the poor.',fav:-3,res:'Kind, but that is not what happened. Many poor people actually lost help, because monasteries had given out food and cared for the sick.'}
+ ]},
+ {t:'story',who:'will',date:'1537',ev:'edward',text:"On 12 October 1537, Jane gave Henry what he longed for: a healthy son, Prince Edward. Bells rang across England. But Jane became ill and died twelve days later. Henry was heartbroken. When he died, he was buried beside her."},
+ {t:'order',label:'Line of succession',q:'By 1544 a law named Henry’s heirs. Put them in the order they would become king or queen.',items:[{t:'Prince Edward, Jane’s son, born 1537'},{t:'Princess Mary, Catherine’s daughter, born 1516'},{t:'Princess Elizabeth, Anne’s daughter, born 1533'}],hint:'Boys came before girls. Then the older child came first.',why:'This is the [[succession]]. Edward came first because he was a boy. Mary was next because she was older than Elizabeth.'},
+ {t:'quiz',label:'Edward’s age',q:'Edward was born in October 1537. Henry died in January 1547. How old was Edward when he became king?',opts:['9 years old','10 years old','7 years old'],ans:0,hint:'Count the years from October 1537 to October 1546, then think about the months after.',why:'From October 1537 to October 1546 is 9 years. Edward was 9 years and a few months old.'},
+ {t:'reflect',q:'Jane is remembered as the wife who gave Henry a son. Is that a fair way to remember someone?',pts:['What else might we want to know about Jane?','Why do you think Henry buried himself next to her?','How were queens valued in Tudor times?']},
+ {t:'reward',card:{who:'jane',name:'Jane Seymour',line:'Queen 1536–1537',fate:'Died',facts:['Mother of Edward VI.','Married Henry on 30 May 1536.','Died on 24 October 1537.']}}
+]},
+{title:'The Portrait Problem',years:'1539–1540',who:'anneC',steps:[
+ {t:'story',who:'will',date:'1539',text:"After Jane died, Henry was lonely. Thomas Cromwell suggested a new wife: Anne, a princess from Cleves in Germany. The marriage would make an [[alliance]] in case France and Spain joined forces against England. Henry wanted to see what she looked like first."},
+ {t:'story',who:'will',date:'1539',text:"So Henry sent his painter, Hans Holbein the Younger, to paint Anne’s portrait. Henry liked it and agreed to the marriage. A portrait painted at the time is a [[primary source]]. But how far can we trust it?"},
+ {t:'sort',label:'Trusting a portrait',q:'Does each statement help us trust the portrait, or make us careful?',buckets:[{id:'t',l:'Helps us trust it',d:'Good reason to believe it'},{id:'c',l:'Makes us careful',d:'Good reason to question it'}],cards:[
+   {t:'Holbein was one of the most skilled painters in Europe.',b:'t',why:'A skilled painter could paint a realistic face.'},
+   {t:'Holbein was paid by the king’s side, who wanted a successful marriage.',b:'c',why:'The people paying might want the picture to look good. That could be [[propaganda]].'},
+   {t:'It was painted at the time, so it is a primary source.',b:'t',why:'A primary source from the time is valuable evidence.'},
+   {t:'There were no cameras, so nobody could compare the portrait to a photograph.',b:'c',why:'We cannot easily check how accurate it was.'},
+   {t:'Holbein’s other portraits of real people look very lifelike.',b:'t',why:'It suggests he was usually honest in his work.'},
+   {t:'The portrait was made to help arrange a political marriage.',b:'c',why:'It had a job to do, so its purpose might shape how it was painted.'}
+ ]},
+ {t:'story',who:'anneC',date:'1540',ev:'cleves',text:"I arrived in England in December 1539. It is said that Henry was disappointed when we met. We married on 6 January 1540, but the marriage did not work. By July it was annulled, and I agreed. Henry gave me a large income and houses, including Hever Castle. He called me his ‘beloved sister’."},
+ {t:'decision',who:'henry',label:'Handling the marriage',q:'She does not look like her portrait! What do you advise?',opts:[
+   {l:'Marry her anyway. The alliance matters.',fav:3,res:'This is what happened first. The wedding went ahead on 6 January 1540.'},
+   {l:'Call off the wedding and send her home.',fav:-2,res:'Henry considered it, but he did not want to upset her family’s allies at a dangerous time.'},
+   {l:'Blame the painter.',fav:-5,res:'Holbein kept working for the king. It was Thomas Cromwell, who arranged the match, who lost power. He was executed in July 1540.'}
+ ]},
+ {t:'story',who:'will',date:'1540',ev:'cromwell',text:"Anne stayed in England and lived comfortably until 1557. She outlived Henry and all his other wives. Many say she was the luckiest of them all."},
+ {t:'quiz',label:'Primary sources',q:'What is a primary source?',opts:['Something made at the time you are studying, like a portrait, letter or diary','The most important source of all','A book written long after the events'],ans:0,hint:'The word “primary” means “first”. Think about when it was created.',why:'A primary source comes from the time itself. A book written much later is a secondary source.'},
+ {t:'reflect',q:'Henry chose a wife from a painting. What could go wrong with choosing that way?',pts:['Why might a painter flatter someone?','Why was this marriage really important?','Why did Anne of Cleves come out well from all this?']},
+ {t:'reward',card:{who:'anneC',name:'Anne of Cleves',line:'Queen January–July 1540',fate:'Divorced',facts:['Painted by Hans Holbein the Younger.','Marriage annulled in July 1540.','Lived until 1557, outliving Henry and all his wives.']}}
+]},
+{title:'The Rose Without a Thorn',years:'1540–1542',who:'cathH',steps:[
+ {t:'story',who:'cathH',date:'1540',ev:'howard',text:"I am Catherine Howard, still a teenager when I married Henry on 28 July 1540. My uncle, the powerful Duke of Norfolk, helped me to catch the king’s eye. Anne Boleyn was my cousin. Henry was 49 and often in pain from a bad leg, but he gave me jewels and called me his ‘rose without a thorn’."},
+ {t:'story',who:'will',date:'1541',text:"In 1541, Henry and Catherine travelled north together. Meanwhile, Archbishop Cranmer was handed a shocking letter. It claimed that Catherine had kept secrets about her past and had secretly met a courtier called Thomas Culpeper."},
+ {t:'decision',who:'will',label:'The secret letter',q:'You are Cranmer. You are holding the letter. What do you do?',opts:[
+   {l:'Tell the king straight away.',fav:4,res:'Cranmer did. Hiding something like this could itself be seen as treason, and he did not dare wait.'},
+   {l:'Quietly check the facts first, and tell nobody.',fav:-2,res:'Keeping it secret was very risky. Anyone who knew and said nothing could be punished.'},
+   {l:'Burn the letter and pretend you never saw it.',fav:-10,res:'This would have been the most dangerous choice. Anyone who hid the truth could be blamed.'}
+ ]},
+ {t:'story',who:'will',date:'1542',ev:'howarddead',text:"Henry was shocked. Catherine’s household was questioned. She was accused of [[treason]], and she was executed at the Tower of London on 13 February 1542. She was very young. Many historians feel she was used by powerful relatives, then punished harshly."},
+ {t:'order',label:'Catherine’s story',q:'Put these events from Catherine’s story in order, earliest first.',items:[{t:'Catherine marries Henry',s:'July 1540'},{t:'Henry and Catherine travel north',s:'Summer 1541'},{t:'Cranmer is given the letter',s:'November 1541'},{t:'Catherine is executed',s:'February 1542'}],hint:'The wedding comes first, and the end of the story comes last.',why:'From wedding to execution took less than two years.'},
+ {t:'quiz',label:'The Howard family',q:'Catherine Howard and Anne Boleyn were related. How?',opts:['They were cousins','They were sisters','They were aunt and niece'],ans:0,hint:'Their families, the Howards and the Boleyns, were connected through the Duke of Norfolk.',why:'Both were from the powerful Howard family network. This is partly why the Howards rose, and partly why they fell.'},
+ {t:'reflect',q:'Catherine was young, and her family pushed her into the king’s attention. Was she a victim?',pts:['What choices did a young woman really have at the Tudor court?','What does this story tell us about who held power?','How do historians decide what really happened?']},
+ {t:'reward',card:{who:'cathH',name:'Catherine Howard',line:'Queen 1540–1542',fate:'Beheaded',facts:['Cousin of Anne Boleyn.','Henry called her his “rose without a thorn”.','Executed on 13 February 1542.']}}
+]},
+{title:'The Survivor',years:'1543–1547',who:'cathP',steps:[
+ {t:'story',who:'cathP',date:'1543',ev:'parr',text:"I am Catherine Parr. I had already been widowed twice when I married Henry on 12 July 1543. I was 31, well educated and fond of books and languages. Henry was 52 and often ill."},
+ {t:'story',who:'cathP',text:"I helped bring Henry’s children together at court. Mary, Elizabeth and Edward all had the best tutors. I also wrote books, including ‘Prayers or Meditations’ in 1545. I was the first English queen to publish books under her own name."},
+ {t:'decision',who:'henry',label:'Ruling while Henry is away',q:'I am leaving to fight in France! Someone must rule England while I am gone. Who?',opts:[
+   {l:'Catherine Parr, as regent.',fav:8,res:'This is what Henry chose in 1544. Catherine ran the country with a council, and signed orders as queen.'},
+   {l:'Prince Edward, who is six years old.',fav:-4,res:'Much too young! A six-year-old could not rule, and rivals might take advantage.'},
+   {l:'Nobody. The country can look after itself.',fav:-5,res:'This would be risky. A country without a ruler could face rebels or invaders.'}
+ ]},
+ {t:'story',who:'will',date:'1544',ev:'regent',text:"In 1544 a new law put Mary and Elizabeth back in line to the throne after Edward. Catherine may have encouraged this. She is also said to have talked her way out of danger in 1546, when some of Henry’s advisers wanted to arrest her over her religious views."},
+ {t:'story',who:'will',date:'1547',ev:'henrydies',text:"Henry died on 28 January 1547, aged 55. His nine-year-old son became King Edward VI. Catherine later married Thomas Seymour, but she died in 1548 after giving birth to a daughter."},
+ {t:'quiz',label:'Still married',q:'Which wife was still married to Henry when he died?',opts:['Catherine Parr','Anne of Cleves','Jane Seymour'],ans:0,hint:'Jane died in 1537. Anne’s marriage ended in 1540.',why:'Catherine Parr was the only wife who was Henry’s wife right up to the end. That is why she is called the survivor.'},
+ {t:'quiz',label:'Catherine Parr’s book',q:'Why is Catherine Parr’s book ‘Prayers or Meditations’ important?',opts:['She was the first English queen to publish a book under her own name','It was the first book ever printed in England','She wrote it in secret code'],ans:0,hint:'Books had been printed in England since the 1470s.',why:'This was a new thing for a queen. It shows how well educated she was.'},
+ {t:'reflect',q:'Catherine Parr kept her head by being clever and careful. What lessons could a person learn from that?',pts:['What qualities helped her to survive?','Why was it harder to be a queen than a king?','How was Catherine Parr different from the other wives?']},
+ {t:'reward',card:{who:'cathP',name:'Catherine Parr',line:'Queen 1543–1547',fate:'Survived',facts:['Regent while Henry fought in France in 1544.','First English queen to publish books under her own name.','Was married to Henry when he died in 1547.']}}
+]},
+{title:'The Royal Reckoning',years:'1547–1603',who:'elizabeth',steps:[
+ {t:'story',who:'will',text:"You’ve met all six wives! One last challenge, then. Show the court what you know in the Royal Reckoning."},
+ {t:'order',label:'The six wives in order',q:'Put the six wives in the order Henry married them.',items:[{t:'Catherine of Aragon',s:'1509'},{t:'Anne Boleyn',s:'1533'},{t:'Jane Seymour',s:'1536'},{t:'Anne of Cleves',s:'1540'},{t:'Catherine Howard',s:'1540'},{t:'Catherine Parr',s:'1543'}],hint:'The two Annes and the three Catherines are mixed up. Remember: Aragon, Boleyn, Seymour, Cleves, Howard, Parr.',why:'The order is Aragon, Boleyn, Seymour, Cleves, Howard, Parr. Many classes remember the fates with a rhyme: divorced, beheaded, died, divorced, beheaded, survived.'},
+ {t:'match',label:'Wives and their fates',q:'Match each wife to what happened to her.',pairs:[['Catherine of Aragon','Marriage declared void, 1533'],['Anne Boleyn','Executed, 1536'],['Jane Seymour','Died after Edward’s birth, 1537'],['Anne of Cleves','Marriage annulled, 1540'],['Catherine Howard','Executed, 1542'],['Catherine Parr','Still married when Henry died, 1547']],why:'Divorced, beheaded, died, divorced, beheaded, survived!'},
+ {t:'quiz',label:'The son',q:'Which wife gave Henry the son he wanted?',opts:['Jane Seymour','Anne Boleyn','Catherine Parr'],ans:0,hint:'Her son was Edward.',why:'Jane Seymour gave birth to Edward in 1537.'},
+ {t:'quiz',label:'The Act of Supremacy',q:'What did the Act of Supremacy of 1534 do?',opts:['It made Henry head of the Church in England','It closed all the monasteries','It made Henry king of Spain'],ans:0,hint:'It happened after Henry broke away from the Pope.',why:'The king, not the Pope, was now the head of the Church of England.'},
+ {t:'quiz',label:'Primary sources again',q:'Which of these is a primary source about Henry’s court?',opts:['A portrait painted by Holbein in 1540','A film about Henry made in 2008','A textbook written in 2020'],ans:0,hint:'Primary sources are made at the time.',why:'The portrait was made at the time. The others were made much later.'},
+ {t:'quiz',label:'The reason',q:'What was Henry’s biggest worry throughout his six marriages?',opts:['Having a male heir to follow him','Finding a queen who could sing','Winning every jousting contest'],ans:0,hint:'It is the reason for most of the story.',why:'A male heir. Without one, Henry feared that the Tudors might lose the throne.'},
+ {t:'story',who:'edward',date:'1547',text:"Henry’s son became King Edward VI at the age of nine. His advisers ruled for him. Edward was a clever, serious boy, but he became ill and died in 1553, aged fifteen."},
+ {t:'story',who:'mary',date:'1553',ev:'maryq',text:"Next came Henry’s eldest daughter, Mary I, the daughter of Catherine of Aragon. She was a devout Catholic who tried to bring England back to the Pope. She ruled from 1553 to 1558."},
+ {t:'story',who:'elizabeth',date:'1558',ev:'eliz',text:"Then came Elizabeth I, Anne Boleyn’s daughter. She reigned for 45 years, until 1603, and became one of England’s most famous monarchs. The daughter Henry once thought was not enough was perhaps the greatest Tudor of all."},
+ {t:'result'}
+]}
+];
+CH[0].no='Prologue';CH.forEach((c,i)=>{if(i>0&&i<7)c.no='Chapter '+i;});CH[7].no='Finale';
+
+/* ---------- state ---------- */
+const KEY='henrysCourt.v1',BKEY='henrysCourt.board.v1';
+const fresh=()=>({name:'',favour:30,prog:{},tl:[],words:[],settings:{tts:false,big:false,unlock:false}});
+let S=fresh(),board=[];
+try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);S=Object.assign(fresh(),o);S.settings=Object.assign(fresh().settings,o.settings||{});}}catch(e){}
+try{const r=localStorage.getItem(BKEY);if(r)board=JSON.parse(r)||[];}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
+const saveBoard=()=>{try{localStorage.setItem(BKEY,JSON.stringify(board));}catch(e){}};
+
+let view='title',run=null,cur={on(){}},lastFocus=null;
+const app=$('#app');
+const unlocked=i=>S.settings.unlock||i===0||!!(S.prog[i-1]&&S.prog[i-1].done);
+const starStr=n=>'<span class="stars" aria-label="'+n+' of 3 stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(3-n)+'</span></span>';
+const rankOf=f=>f>=90?'Henry’s Most Trusted Advisor':f>=70?'Royal Counsellor':f>=50?'Court Favourite':f>=30?'Keen Young Page':'Apprentice Scribe';
+const curFav=()=>clamp(S.favour+(run?run.fav:0),0,100);
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{t.hidden=true;},2600);}
+function updateMeter(){
+  const f=curFav(),show=view!=='title';
+  $('#favour').hidden=!show;
+  $('#favour .meter i').style.width=f+'%';
+  $('#favour .meter').setAttribute('aria-valuenow',f);
+  $('#favnum').textContent=f;
+}
+function applyTheme(){document.documentElement.classList.toggle('big',!!S.settings.big);}
+function unlockEv(ev){if(!ev)return;(Array.isArray(ev)?ev:[ev]).forEach(e=>{if(!S.tl.includes(e))S.tl.push(e);});save();}
+function speak(text){
+  try{
+    if(!('speechSynthesis' in window))return;
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(plain(text));u.lang='en-GB';u.rate=.95;speechSynthesis.speak(u);
+  }catch(e){}
+}
+const canSpeak=()=>{try{return 'speechSynthesis' in window;}catch(e){return false;}};
+
+/* ---------- scoring ---------- */
+function record(level,label){
+  run.total++;
+  if(level==='full'){run.ok+=1;run.fav+=4;}
+  else if(level==='part'){run.ok+=.5;run.fav+=2;}
+  else{run.fav-=2;run.missed.push(label);}
+  updateMeter();
+}
+const levelFor=(mist,n)=>mist===0?'full':mist<=Math.max(2,Math.ceil(n/3))?'part':'miss';
+
+/* ---------- views ---------- */
+function titleView(){
+  const has=S.name&&Object.keys(S.prog).length>0;
+  app.innerHTML=
+  '<section class="hero"><div>'+
+    '<h1>Henry’s Court</h1>'+
+    '<p class="sub">Advise a king, meet his six wives and try to keep your head.</p>'+
+    '<div class="namebox"><div><label for="nm">Your name, advisor</label><input id="nm" type="text" maxlength="20" autocomplete="off" value="'+esc(S.name||'')+'" placeholder="e.g. Sir Alex"></div>'+
+    '<button class="btn primary" data-act="start">'+(has?'Continue':'Start')+'</button>'+
+    (has?'<button class="btn ghost onDark" data-act="newplayer">New player</button>':'')+'</div>'+
+    '<div class="toggles">'+
+      '<label><input type="checkbox" id="tg-big" '+(S.settings.big?'checked':'')+' data-act="tgbig"> Whiteboard mode (big text and class voting)</label>'+
+      (canSpeak()?'<label><input type="checkbox" id="tg-tts" '+(S.settings.tts?'checked':'')+' data-act="tgtts"> Read stories aloud</label>':'')+
+    '</div>'+
+    '<div class="row" style="margin-top:0"><button class="chip" data-act="modal" data-arg="board">Class board</button><button class="chip" data-act="modal" data-arg="teacher">Teacher area</button></div>'+
+    '<p class="safety" style="margin-top:1rem">For Year 6 (KS2 History: the Tudors). Your progress is saved on this device only. Nothing is sent anywhere and nobody needs an account.</p>'+
+  '</div><div class="heroart"><div class="roseBig">'+rose(110)+'</div>'+pf('henry')+'</div></section>';
+}
+function hubView(){
+  const done=Object.values(S.prog).filter(p=>p.done).length;
+  app.innerHTML=
+  '<div class="hubhead"><div><h2>The Great Hall</h2><p class="muted" style="color:#c8d3c4;margin:.2rem 0 0">Welcome, '+esc(S.name||'Advisor')+'. Your rank: <b style="color:var(--gold)">'+rankOf(S.favour)+'</b> · '+done+' of 8 chapters done</p></div>'+
+  '<div class="hubnav"><button class="chip" data-act="modal" data-arg="gallery">Royal gallery</button><button class="chip" data-act="modal" data-arg="board">Class board</button><button class="chip" data-act="modal" data-arg="teacher">Teacher area</button></div></div>'+
+  '<div class="grid">'+CH.map((c,i)=>{
+    const lock=!unlocked(i),p=S.prog[i];
+    return '<button class="chcard '+(lock?'locked':'')+(p&&p.done?' done':'')+'" data-act="open" data-arg="'+i+'" '+(lock?'aria-disabled="true"':'')+'>'+
+      pf(c.who)+'<span class="no">'+c.no+'</span><span class="ctitle">'+c.title+'</span><span class="cyears">'+c.years+'</span>'+
+      '<span class="cstat">'+(lock?'🔒 Locked':p&&p.done?starStr(p.stars):'Ready to play')+'</span></button>';
+  }).join('')+'</div>';
+}
+function playView(){
+  const c=CH[run.ch];
+  app.innerHTML=
+  '<div class="playhead"><div class="ct">'+c.no+': '+c.title+'</div><button class="chip" data-act="leave">Leave chapter</button></div>'+
+  '<div class="bar" aria-hidden="true"><i id="pbar"></i></div><div id="stage"></div>';
+  renderStep();
+}
+function renderStep(){
+  const st=CH[run.ch].steps[run.i];
+  $('#pbar').style.width=Math.round(run.i/CH[run.ch].steps.length*100)+'%';
+  const stage=$('#stage');
+  ({story:sStory,decision:sDecision,quiz:sQuiz,order:sOrder,sort:sSort,match:sMatch,reflect:sReflect,reward:sReward,result:sResult})[st.t](stage,st);
+  window.scrollTo(0,0);
+  updateMeter();
+}
+const next=()=>{run.i++;renderStep();};
+const stepsOf=()=>CH[run.ch].steps;
+
+/* ---------- step renderers ---------- */
+function sStory(el,st){
+  unlockEv(st.ev);
+  const canBack=run.i>0&&stepsOf()[run.i-1].t==='story';
+  el.innerHTML='<div class="scene"><div class="who">'+pf(st.who)+'<div class="nameplate">'+NAMES[st.who]+'</div></div>'+
+   '<div class="bubble panel">'+(st.date?'<div class="datebadge">'+st.date+'</div>':'')+'<p>'+fmt(st.text)+'</p>'+
+   '<div class="row">'+(canBack?'<button class="btn ghost" data-act="s" data-arg="back">← Back</button>':'')+
+   (canSpeak()?'<button class="btn ghost" data-act="s" data-arg="speak">🔊 Read aloud</button>':'')+
+   '<button class="btn primary" data-act="s" data-arg="next" style="margin-left:auto">Next →</button></div></div></div>';
+  cur={on(a){if(a==='next')next();else if(a==='back'){run.i--;renderStep();}else if(a==='speak')speak(st.text);}};
+  if(S.settings.tts)speak(st.text);
+}
+function sDecision(el,st){
+  const votes=st.opts.map(()=>0),big=S.settings.big;let done=false;
+  const draw=()=>{
+    el.innerHTML='<div class="scene"><div class="who">'+pf(st.who)+'<div class="nameplate">'+NAMES[st.who]+'</div></div><div class="panel">'+
+     '<span class="tag">Decision</span><div class="q">'+fmt(st.q)+'</div><div class="opts">'+
+     st.opts.map((o,i)=>'<div class="'+(big?'voterow':'')+'"><button class="opt" data-act="s" data-arg="pick" data-i="'+i+'">'+fmt(o.l)+'</button>'+
+       (big?'<button class="vote" data-act="s" data-arg="vote" data-i="'+i+'" aria-label="Add a vote">🗳 '+votes[i]+'</button>':'')+'</div>').join('')+'</div>'+
+     (big?'<div class="row"><button class="btn ghost" data-act="s" data-arg="top">Pick the class’s top choice</button><button class="btn ghost" data-act="s" data-arg="reset">Reset votes</button></div><p class="small muted" id="votemsg" style="margin:.5rem 0 0">Class vote: tap 🗳 for each hand raised, then pick the winner.</p>':'')+
+     '<div id="fbk"></div></div></div>';
+  };
+  draw();
+  const pick=i=>{
+    if(done)return;done=true;
+    const o=st.opts[i];run.fav+=o.fav;updateMeter();
+    $('#fbk').innerHTML='<div class="fb '+(o.fav>=0?'good':'bad')+'"><b>What happened in history</b><p style="margin:.3rem 0">'+fmt(o.res)+'</p>'+
+      '<p class="favchg '+(o.fav>=0?'up':'down')+'" style="margin:0">Favour '+(o.fav>=0?'+':'')+o.fav+'</p></div><div class="row end"><button class="btn primary" data-act="s" data-arg="next">Continue →</button></div>';
+    el.querySelectorAll('.opt,.vote').forEach((b,j)=>{b.disabled=true;if(b.classList.contains('opt')&&b.dataset.i==i)b.classList.add('sel');});
+  };
+  cur={on(a,b){
+    if(a==='pick')pick(+b.dataset.i);
+    else if(a==='vote'&&!done){votes[+b.dataset.i]++;b.innerHTML='🗳 '+votes[+b.dataset.i];}
+    else if(a==='reset'&&!done){votes.fill(0);el.querySelectorAll('.vote').forEach(v=>v.innerHTML='🗳 0');}
+    else if(a==='top'&&!done){const m=Math.max.apply(null,votes),w=votes.map((v,i)=>v===m?i:-1).filter(i=>i>=0);
+      if(m===0||w.length>1){$('#votemsg').textContent=m===0?'No votes yet. Count hands first.':'It’s a tie. Discuss, then vote again.';}
+      else pick(w[0]);}
+    else if(a==='next')next();
+  }};
+}
+function optButtons(items){return items.map((o,i)=>'<button class="opt" data-act="s" data-arg="o" data-i="'+i+'">'+fmt(o.t)+'</button>').join('');}
+function sQuiz(el,st){
+  const opts=shuffle(st.opts.map((t,i)=>({t,c:i===st.ans}))),n=opts.length;let tries=0,over=false;
+  el.innerHTML='<div class="scene"><div class="who">'+pf('will')+'<div class="nameplate">'+NAMES.will+'</div></div><div class="panel"><span class="tag">Question</span><div class="q">'+fmt(st.q)+'</div>'+
+   '<div class="opts">'+optButtons(opts)+'</div><div id="fbk" aria-live="polite"></div></div></div>';
+  cur={on(a,b){
+    if(a==='next'){next();return;}
+    if(a!=='o'||over)return;
+    const o=opts[+b.dataset.i];
+    if(o.c){
+      over=true;b.classList.add('ok');lock();
+      const lvl=tries===0?'full':'part';record(lvl,st.label);
+      $('#fbk').innerHTML='<div class="fb good"><b>'+(tries===0?'Well done!':'You got there!')+'</b><p style="margin:.3rem 0">'+fmt(st.why)+'</p></div><div class="row end"><button class="btn primary" data-act="s" data-arg="next">Next →</button></div>';
+    }else{
+      tries++;b.classList.add('no','shake');b.disabled=true;
+      if(tries>=2||tries>=n-1){
+        over=true;lock();el.querySelectorAll('.opt').forEach((x,i)=>{if(opts[i].c)x.classList.add('ok');});
+        record('miss',st.label);
+        $('#fbk').innerHTML='<div class="fb bad"><b>The answer was shown</b><p style="margin:.3rem 0">'+fmt(st.why)+'</p></div><div class="row end"><button class="btn primary" data-act="s" data-arg="next">Next →</button></div>';
+      }else $('#fbk').innerHTML='<div class="fb bad"><b>Not quite.</b> <span>Hint: '+fmt(st.hint||'Read the question again.')+'</span></div>';
+    }
+  }};
+  function lock(){el.querySelectorAll('.opt').forEach(x=>x.disabled=true);}
+}
+function sOrder(el,st){
+  const n=st.items.length,pool=shuffle(st.items.map((it,i)=>({it,i}))),placed=[];let mist=0,over=false;
+  const draw=()=>{
+    el.innerHTML='<div class="scene"><div class="who">'+pf('will')+'<div class="nameplate">'+NAMES.will+'</div></div><div class="panel"><span class="tag">Put in order</span><div class="q">'+fmt(st.q)+'</div>'+
+     '<div class="slots">'+st.items.map((it,k)=>{const p=placed[k];return '<div class="slot'+(p?' filled':'')+'"><span class="n">'+(k+1)+'</span><span>'+(p?fmt(p.it.t):'')+'</span>'+(p&&p.it.s?'<span class="s">'+p.it.s+'</span>':'')+'</div>';}).join('')+'</div>'+
+     (over?'':'<div class="pool">'+pool.filter(p=>!placed.includes(p)).map(p=>'<button class="opt" data-act="s" data-arg="o" data-i="'+p.i+'">'+fmt(p.it.t)+'</button>').join('')+'</div>')+
+     '<div id="fbk" aria-live="polite"></div></div></div>';
+  };
+  draw();
+  cur={on(a,b){
+    if(a==='next'){next();return;}
+    if(a!=='o'||over)return;
+    const idx=+b.dataset.i,k=placed.length;
+    if(idx===k){
+      placed.push(pool.find(p=>p.i===idx));
+      if(placed.length===n){
+        over=true;const lvl=levelFor(mist,n);record(lvl,st.label);draw();
+        $('#fbk').innerHTML='<div class="fb good"><b>'+(mist===0?'Perfect order!':'All in place.')+'</b><p style="margin:.3rem 0">'+fmt(st.why)+'</p></div><div class="row end"><button class="btn primary" data-act="s" data-arg="next">Next →</button></div>';
+      }else{draw();$('#fbk').innerHTML='';}
+    }else{
+      mist++;b.classList.add('no','shake');
+      const f=$('#fbk');f.innerHTML='<div class="fb bad"><b>Not that one yet.</b> '+(mist>=2?'Hint: '+fmt(st.hint||''):'Think again about what comes next.')+'</div>';
+      setTimeout(()=>b.classList.remove('no','shake'),500);
+    }
+  }};
+}
+function sSort(el,st){
+  const cards=shuffle(st.cards);let k=0,mist=0,waiting=false;
+  const draw=()=>{
+    const c=cards[k];
+    el.innerHTML='<div class="scene"><div class="who">'+pf('will')+'<div class="nameplate">'+NAMES.will+'</div></div><div class="panel"><span class="tag">Sort it</span><div class="q">'+fmt(st.q)+'</div>'+
+     '<div class="dots" aria-label="Card '+(k+1)+' of '+cards.length+'">'+cards.map((x,i)=>'<i class="'+(i<=k?'on':'')+'"></i>').join('')+'</div>'+
+     '<div class="cardq">'+fmt(c.t)+'</div><div class="buckets">'+st.buckets.map(b=>'<button class="bucket" data-act="s" data-arg="b" data-b="'+b.id+'"><b>'+b.l+'</b><span>'+b.d+'</span></button>').join('')+'</div><div id="fbk" aria-live="polite"></div></div></div>';
+    waiting=false;
+  };
+  draw();
+  cur={on(a,b){
+    if(a==='next'){
+      if(k<cards.length-1){k++;draw();}
+      else{const lvl=levelFor(mist,cards.length);record(lvl,st.label);next();}
+      return;
+    }
+    if(a!=='b'||waiting)return;
+    const c=cards[k];
+    if(b.dataset.b===c.b){
+      waiting=true;el.querySelectorAll('.bucket').forEach(x=>x.disabled=true);
+      $('#fbk').innerHTML='<div class="fb good"><b>Correct.</b><p style="margin:.3rem 0">'+fmt(c.why)+'</p></div><div class="row end"><button class="btn primary" data-act="s" data-arg="next">'+(k<cards.length-1?'Next card →':'Finish →')+'</button></div>';
+    }else{
+      mist++;b.classList.add('shake');
+      $('#fbk').innerHTML='<div class="fb bad"><b>Not quite.</b> Try a different label.</div>';
+      setTimeout(()=>b.classList.remove('shake'),500);
+    }
+  }};
+}
+function sMatch(el,st){
+  const L=st.pairs.map((p,i)=>({t:p[0],i})),R=shuffle(st.pairs.map((p,i)=>({t:p[1],i})));
+  let sel=null,mist=0,left=st.pairs.length;const doneL=new Set(),doneR=new Set();
+  const draw=()=>{
+    el.innerHTML='<div class="scene"><div class="who">'+pf('will')+'<div class="nameplate">'+NAMES.will+'</div></div><div class="panel"><span class="tag">Match</span><div class="q">'+fmt(st.q)+'</div>'+
+     '<div class="cols"><div class="opts">'+L.map(x=>'<button class="opt '+(doneL.has(x.i)?'done':sel===x.i?'sel':'')+'" data-act="s" data-arg="l" data-i="'+x.i+'" '+(doneL.has(x.i)?'disabled':'')+'>'+fmt(x.t)+'</button>').join('')+'</div>'+
+     '<div class="opts">'+R.map(x=>'<button class="opt '+(doneR.has(x.i)?'done':'')+'" data-act="s" data-arg="r" data-i="'+x.i+'" '+(doneR.has(x.i)?'disabled':'')+'>'+fmt(x.t)+'</button>').join('')+'</div></div><div id="fbk" aria-live="polite"></div></div></div>';
+  };
+  draw();
+  cur={on(a,b){
+    if(a==='next'){next();return;}
+    if(a==='l'){sel=+b.dataset.i;draw();return;}
+    if(a==='r'){
+      if(sel===null){$('#fbk').innerHTML='<div class="fb"><b>Tap an item on the left first.</b></div>';return;}
+      const i=+b.dataset.i;
+      if(i===sel){
+        doneL.add(i);doneR.add(i);sel=null;left--;draw();
+        if(left===0){const lvl=levelFor(mist,st.pairs.length);record(lvl,st.label);
+          $('#fbk').innerHTML='<div class="fb good"><b>All matched!</b><p style="margin:.3rem 0">'+fmt(st.why)+'</p></div><div class="row end"><button class="btn primary" data-act="s" data-arg="next">Next →</button></div>';}
+      }else{
+        mist++;b.classList.add('no','shake');
+        $('#fbk').innerHTML='<div class="fb bad"><b>Not a match.</b> Try again.</div>';
+        setTimeout(()=>b.classList.remove('no','shake'),500);
+      }
+    }
+  }};
+}
+function sReflect(el,st){
+  el.innerHTML='<div class="scene"><div class="who">'+pf('will')+'<div class="nameplate">'+NAMES.will+'</div></div><div class="panel"><span class="tag">Talk about it</span><div class="q">'+fmt(st.q)+'</div>'+
+   '<p class="muted">Think, then share with a partner.</p><ul>'+st.pts.map(p=>'<li>'+fmt(p)+'</li>').join('')+'</ul>'+
+   '<div class="row end"><button class="btn primary" data-act="s" data-arg="next">Next →</button></div></div></div>';
+  cur={on(a){if(a==='next')next();}};
+}
+function stars(){const a=run.total?run.ok/run.total:1;return a>=.85?3:a>=.5?2:1;}
+function finish(){
+  if(run.done)return;run.done=true;
+  const old=S.prog[run.ch];if(old)S.favour=clamp(S.favour-old.fav,0,100);
+  S.favour=clamp(S.favour+run.fav,0,100);
+  S.prog[run.ch]={done:true,stars:stars(),ok:run.ok,total:run.total,fav:run.fav,missed:run.missed.slice()};
+  save();
+}
+function sReward(el,st){
+  const c=st.card;finish();
+  el.innerHTML='<div class="panel"><span class="tag">Royal portrait card earned</span><div class="reward">'+pf(c.who)+'<div><h2>'+c.name+'</h2><div class="muted">'+c.line+'</div><span class="fate">'+c.fate+'</span>'+
+   '<ul>'+c.facts.map(f=>'<li>'+f+'</li>').join('')+'</ul>'+
+   '<p>Chapter score: '+starStr(S.prog[run.ch].stars)+' &nbsp; Favour this chapter: <b class="favchg '+(run.fav>=0?'up':'down')+'">'+(run.fav>=0?'+':'')+run.fav+'</b></p>'+
+   (run.missed.length?'<p class="small muted">Worth another look: '+run.missed.map(esc).join(', ')+'.</p>':'')+
+   '<div class="row"><button class="btn primary" data-act="s" data-arg="hall">Back to the Great Hall</button></div></div></div></div>';
+  cur={on(a){if(a==='hall'){view='hub';run=null;render();}}};
+}
+function sResult(el){
+  finish();
+  const total=Object.values(S.prog).reduce((a,p)=>a+(p.stars||0),0),f=S.favour,r=rankOf(f);
+  const mine=board.find(b=>b.name===S.name);
+  const entry={name:S.name||'Advisor',favour:f,stars:total,date:new Date().toISOString().slice(0,10)};
+  if(mine)Object.assign(mine,entry);else board.push(entry);
+  board.sort((a,b)=>b.favour-a.favour||b.stars-a.stars);board=board.slice(0,30);saveBoard();
+  el.innerHTML='<div class="panel"><div class="cert">'+rose(70)+'<h2>Certificate of Service</h2><p>This is to certify that</p><div class="rank" style="color:var(--ink)">'+esc(S.name||'Advisor')+'</div><p>has served King Henry VIII and earned the rank of</p><div class="rank">'+r+'</div>'+
+   '<div class="stats"><div class="stat"><b>'+f+'</b>Favour</div><div class="stat"><b>'+total+' / 24</b>Stars</div><div class="stat"><b>'+Object.values(S.prog).filter(p=>p.done).length+' / 8</b>Chapters</div></div></div>'+
+   '<p class="small muted" style="margin-top:.8rem">Want to keep this? Take a screenshot of the certificate.</p>'+
+   '<div class="row"><button class="btn primary" data-act="s" data-arg="hall">Back to the Great Hall</button><button class="btn ghost" data-act="s" data-arg="board">Class board</button><button class="btn ghost" data-act="s" data-arg="again">Next player</button></div></div>';
+  cur={on(a){
+    if(a==='hall'){view='hub';run=null;render();}
+    else if(a==='board')openModal('board');
+    else if(a==='again')acts.newplayer();
+  }};
+}
+
+/* ---------- modals ---------- */
+function openModal(kind){
+  const m=$('#modal'),mt=$('#mt'),mb=$('#mb');lastFocus=document.activeElement;
+  if(kind==='timeline'){
+    mt.textContent='Tudor timeline';
+    mb.innerHTML='<p class="muted">Events unlock as you play.</p><ul class="tl">'+TL.map(e=>{const u=S.tl.includes(e[0]);return '<li class="'+(u?'':'lock')+'"><span class="y">'+e[1]+'</span><span>'+(u?e[2]:'??? Keep playing to find out.')+'</span></li>';}).join('')+'</ul>';
+  }else if(kind==='words'){
+    mt.textContent='Word bank';
+    const w=S.words;
+    mb.innerHTML='<p class="muted">Tap any underlined word in the game to add it here.</p>'+(w.length?'<div class="wordlist">'+w.map(k=>'<div><b>'+k+'</b><br>'+GL[k]+'</div>').join('')+'</div>':'<p>You haven’t collected any words yet.</p>')+
+      '<details style="margin-top:1rem"><summary>See every word</summary><div class="wordlist" style="margin-top:.5rem">'+Object.keys(GL).map(k=>'<div><b>'+k+'</b><br>'+GL[k]+'</div>').join('')+'</div></details>';
+  }else if(kind==='settings'){
+    mt.textContent='Settings';
+    mb.innerHTML='<div class="toggles" style="flex-direction:column">'+
+     '<label><input type="checkbox" id="s-big" data-act="tgbig" '+(S.settings.big?'checked':'')+'> Whiteboard mode: bigger text and class voting on decisions</label>'+
+     (canSpeak()?'<label><input type="checkbox" id="s-tts" data-act="tgtts" '+(S.settings.tts?'checked':'')+'> Read each story aloud automatically</label>':'')+
+     '<label><input type="checkbox" id="s-unlock" data-act="tgunlock" '+(S.settings.unlock?'checked':'')+'> Teacher: unlock every chapter</label></div>';
+  }else if(kind==='gallery'){
+    mt.textContent='Royal gallery';
+    const got=CH.map((c,i)=>({c,i})).filter(x=>S.prog[x.i]&&S.prog[x.i].done&&x.c.steps.find(s=>s.t==='reward'));
+    mb.innerHTML=got.length?'<div class="gallery">'+got.map(x=>{const cd=x.c.steps.find(s=>s.t==='reward').card;return '<figure>'+pf(cd.who)+'<figcaption><b>'+cd.name+'</b>'+cd.fate+'</figcaption></figure>';}).join('')+'</div>':'<p>Finish a chapter to earn your first portrait card.</p>';
+  }else if(kind==='board'){
+    mt.textContent='Class board';
+    mb.innerHTML=board.length?'<div class="scroll"><table><thead><tr><th>#</th><th>Name</th><th>Favour</th><th>Stars</th><th>Date</th></tr></thead><tbody>'+board.map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(b.name)+'</td><td>'+b.favour+'</td><td>'+b.stars+'</td><td>'+b.date+'</td></tr>').join('')+'</tbody></table></div><p class="small muted">Saved on this device only. Players are added when they finish the Finale.</p>':'<p>No scores yet. Finish the Finale to join the board.</p>';
+  }else if(kind==='teacher'){
+    mt.textContent='Teacher area';
+    const rows=CH.map((c,i)=>{const p=S.prog[i];return '<tr><td>'+c.no+': '+c.title+'</td><td>'+(p&&p.done?starStr(p.stars):'–')+'</td><td>'+(p&&p.done&&p.total?Math.round(p.ok/p.total*100)+'%':'–')+'</td><td>'+(p&&p.missed&&p.missed.length?p.missed.map(esc).join('; '):'')+'</td></tr>';}).join('');
+    const sum=(S.name||'Player')+' — Favour '+S.favour+' ('+rankOf(S.favour)+')\n'+CH.map((c,i)=>{const p=S.prog[i];return c.no+': '+(p&&p.done?p.stars+' stars, '+(p.total?Math.round(p.ok/p.total*100):100)+'%'+(p.missed.length?' — revisit: '+p.missed.join('; '):''):'not done');}).join('\n');
+    mb.innerHTML='<p><b>Player:</b> '+esc(S.name||'none yet')+' · <b>Favour:</b> '+S.favour+'</p><div class="scroll"><table><thead><tr><th>Chapter</th><th>Stars</th><th>Score</th><th>Revisit</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+     '<p style="margin-top:.8rem"><b>Curriculum links.</b> KS2 History: a study of an aspect or theme in British history that extends chronological knowledge beyond 1066. Chronology, cause and consequence, using sources, and historical vocabulary. Also Y6 maths (ages and date gaps) and reading comprehension.</p>'+
+     '<p><b>Using it in class.</b> Turn on Whiteboard mode for big text. On decision screens, tap 🗳 once for each hand raised, then pick the class’s top choice. Each chapter ends with “Talk about it” prompts for partner discussion.</p>'+
+     '<label for="sumtxt" class="small">Summary to copy</label><textarea id="sumtxt" readonly>'+esc(sum)+'</textarea>'+
+     '<div class="row"><button class="btn ghost" data-act="copysum">Copy summary</button><button class="btn ghost" data-act="tgunlock2">'+(S.settings.unlock?'Re-lock chapters':'Unlock every chapter')+'</button><button class="btn ghost" data-act="clearboard">Clear class board</button></div><div id="tmsg" class="small" aria-live="polite"></div>';
+  }
+  m.hidden=false;
+  const f=m.querySelector('button,input');if(f)f.focus();
+}
+function closeModal(){$('#modal').hidden=true;try{if(lastFocus&&lastFocus.focus)lastFocus.focus();}catch(e){}}
+function showDefn(k){
+  const d=$('#defn');if(!GL[k])return;
+  if(!S.words.includes(k)){S.words.push(k);save();}
+  d.innerHTML='<b>'+k+'</b><p style="margin:.3rem 0 .5rem">'+GL[k]+'</p><button class="btn ghost" data-act="closedefn">Got it</button>';
+  d.hidden=false;clearTimeout(showDefn.t);showDefn.t=setTimeout(()=>{d.hidden=true;},12000);
+}
+
+/* ---------- actions ---------- */
+const acts={
+  home(){if(run&&!run.done&&view==='play'){return;}view='title';run=null;render();},
+  start(){
+    const v=($('#nm').value||'').trim()||'Advisor';
+    if(S.name!==v&&Object.keys(S.prog).length){S=Object.assign(fresh(),{settings:S.settings});}
+    S.name=v;save();view='hub';render();
+  },
+  newplayer(){S=Object.assign(fresh(),{settings:S.settings});save();view='title';run=null;closeModal();render();},
+  tgbig(a,el){S.settings.big=el.checked;save();applyTheme();},
+  tgtts(a,el){S.settings.tts=el.checked;save();},
+  tgunlock(a,el){S.settings.unlock=el.checked;save();if(view==='hub')render();},
+  tgunlock2(){S.settings.unlock=!S.settings.unlock;save();openModal('teacher');if(view==='hub')render();},
+  modal(k){openModal(k);},
+  close(){closeModal();},
+  closedefn(){$('#defn').hidden=true;},
+  open(i){
+    i=+i;if(!unlocked(i)){toast('Finish the chapter before this one first.');return;}
+    const old=S.prog[i];
+    run={ch:i,i:0,ok:0,total:0,fav:0,missed:[],done:false};view='play';render();
+  },
+  leave(){view='hub';run=null;render();},
+  s(a,el){cur.on(a,el);},
+  copysum(){
+    const t=$('#sumtxt');t.select();
+    try{navigator.clipboard.writeText(t.value).then(()=>{$('#tmsg').textContent='Copied.';},()=>{$('#tmsg').textContent='Press Ctrl+C (or Cmd+C) to copy the selected text.';});}
+    catch(e){$('#tmsg').textContent='Press Ctrl+C (or Cmd+C) to copy the selected text.';}
+  },
+  clearboard(el){
+    const m=$('#tmsg');
+    if(!acts._c){acts._c=1;m.innerHTML='Tap “Clear class board” again to confirm.';setTimeout(()=>{acts._c=0;},4000);return;}
+    acts._c=0;board=[];saveBoard();m.textContent='Class board cleared.';
+  }
+};
+document.addEventListener('click',e=>{
+  const term=e.target.closest('.term');if(term){showDefn(term.dataset.term);return;}
+  const t=e.target.closest('[data-act]');
+  if(t&&acts[t.dataset.act]){
+    if(t.tagName==='INPUT'&&t.type==='checkbox'){acts[t.dataset.act](t.dataset.arg,t,e);return;}
+    acts[t.dataset.act](t.dataset.arg,t,e);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!$('#modal').hidden)closeModal();else $('#defn').hidden=true;}
+  if(e.key==='Enter'&&e.target.id==='nm'){acts.start();}
+});
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+
+function render(){
+  if(view==='title')titleView();else if(view==='hub')hubView();else playView();
+  updateMeter();window.scrollTo(0,0);
+}
+$('#brandrose').innerHTML=rose(30);
+applyTheme();render();
+})();
+</script>
